@@ -1,0 +1,56 @@
+/*
+ *  Took code from TheFax and repackaged as a proper class
+ */
+#include <Adafruit_GFX.h>    // Core graphics library
+#include "../../src/SSD2119.h"
+
+// Assign human-readable names to some common 16-bit color values:
+#define  BLACK   0x0000
+#define BLUE    0x001F
+#define RED     0xF800
+#define GREEN   0x07E0
+#define CYAN    0x07FF
+#define MAGENTA 0xF81F
+#define YELLOW  0xFFE0
+#define WHITE   0xFFFF
+
+char printbuf[20];
+SSD2119 tft(12,10,11);  //RS CS RST
+
+// other devices on card need to be deselected
+const int sdSelect = 4;
+const int tpSelect = 5;
+const int fSelect = 6;
+
+void setup() {
+  uint32_t elapsed;
+  uint32_t start;
+  pinMode(tpSelect,OUTPUT);
+  digitalWrite(tpSelect,HIGH);
+  pinMode(sdSelect,OUTPUT);
+  digitalWrite(sdSelect,HIGH);
+  pinMode(fSelect,OUTPUT);
+  digitalWrite(fSelect,HIGH);
+  int w,h;
+  Serial.begin(115200);
+  tft.initLCD();
+  w = tft.width();
+  h = tft.height();
+
+  // top left
+  Serial.print(F("Fill Rects              "));
+  tft.fillRect(0,0,  w/2,h/2,RED);
+  //bottom left
+  tft.fillRect(0,h/2,w/2,h/2,  WHITE);
+  //top right
+  tft.fillRect(w/2, 0, w/2, h/2, BLUE);
+  //bottom right
+  tft.fillRect(w/2, h/2, w/2, h/2, GREEN);
+  //middle
+  tft.fillRect(w/4, h/4, w/2, h/2, MAGENTA);
+  Serial.println(micros()-start);
+  }
+
+void loop() {
+}
+
