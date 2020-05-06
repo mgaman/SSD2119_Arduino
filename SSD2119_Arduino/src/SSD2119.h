@@ -300,9 +300,7 @@ class SSD2119 : public Adafruit_GFX
     void initLCD();
     void drawPixel(int16_t x, int16_t y, uint16_t color);
     uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
-    uint32_t color888(uint16_t rgb565);
     void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
- //   void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
     void fillScreen(uint16_t color);
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
     void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
@@ -322,5 +320,7 @@ private:
     void DrawOnePixel(unsigned short usX, unsigned short usY, unsigned long ulColor);
     int _palette;
     uint16_t currentR11H;
-    void setRotation(uint8_t r);
+//    void setRotation(uint8_t r);
+    //   void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
+    uint32_t color888(uint16_t rgb565);
 };

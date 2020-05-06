@@ -1,3 +1,13 @@
+/*
+ *  This code uses the 4-Wire SPI interface
+ *  In this mode only 263K colors (RGB666) are supported, no matter what ENTRY_MODE is set
+ *
+ *  GFX used the 16 bit RGB565 format which gets converted to 24 bit RGB888 format then truncated to RGB666
+ *
+ *  TBD More tuning to save time
+ *  Implement GFX setRotation and drawFastVLine overrides
+ *
+ */
 #include <Arduino.h>
 #include "SSD2119.h"
 #include <SPI.h>
@@ -158,6 +168,9 @@ void SSD2119::initLCD() {
   delay(100); //[ms]
 
   // Configure pixel color format and MCU interface parameters.
+  /*
+   * NOTE this is actually irrelevant in 4-wire SPI mode as only RGB666 is used.
+   */
   SSD2119WriteCmd(SSD2119_ENTRY_MODE_REG);
   if (_palette = RGB888) {
     SSD2119WriteData(SSD2119_ENTRY_MODE_888);
@@ -337,6 +350,7 @@ uint16_t SSD2119::color565(uint8_t r, uint8_t g, uint8_t b) {
   return ((r & 0xF8) << 8) | ((g & 0xFC) << 2) | (b >> 3);
 }
 
+#if 0
 void SSD2119::setRotation(uint8_t r) {
   uint16_t r11h = currentR11H & 0xffc7; // mask out bits 3-5
   // note r note defined anywhere in adafruit documents
@@ -358,6 +372,7 @@ void SSD2119::setRotation(uint8_t r) {
   SSD2119WriteData(r11h);
   currentR11H = r11h;
 }
+#endif
 
 void SSD2119::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
     uint16_t r11h = currentR11H & 0xffc7; // mask out bits 3-5
