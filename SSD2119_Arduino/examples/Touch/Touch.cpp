@@ -41,12 +41,12 @@ void setup() {
 //  pinMode(sSelect,OUTPUT);
 //  digitalWrite(sSelect,HIGH);
   tft.initLCD();
-  tft.setRotation(1);
-  tft.fillScreen(BLACK);
-  ts.begin();
-  ts.setRotation(3);
+  tft.setRotation(0);
   tft.setCursor(20,20);
   tft.fillCircle(20,20,20,YELLOW);
+//  tft.fillScreen(BLACK);
+  ts.begin();
+  ts.setRotation(2);
 }
 
 boolean wastouched = true;
