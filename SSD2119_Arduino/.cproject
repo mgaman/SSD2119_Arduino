@@ -19,12 +19,16 @@
         	
     </storageModule>
     	
+    <storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+    	
+    <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+    	
     <storageModule moduleId="org.eclipse.cdt.core.pathentry">
         		
-        <pathentry kind="src" path=""/>
+        <pathentry excluding="TouchTest/|examples/TouchTest" kind="src" path=""/>
+        		
+        <pathentry kind="out" path=""/>
         	
     </storageModule>
-    	
-    <storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
     
 </cproject>
