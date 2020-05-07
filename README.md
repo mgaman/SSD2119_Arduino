@@ -31,5 +31,5 @@ complete with examples.
 - Only 1 source file containing setup() per project. There is no mechanism for excluding files from the build process.
 I get around that by renaming all examples files as XXX.txt except 1 (which gets compiled).
 - The source file type **pde** or **ino** is not honored. Only **cpp** works.
-- The Arduino plugin does not have any way to set include file path, so examples cannot use the **<SSD2110.h>** format.
+- The Arduino plugin does not have any way to set include file path, so examples cannot use the **<SSD2119.h>** format.
 I am forced to use the relative **"../../src/SSD2119.h"** format
