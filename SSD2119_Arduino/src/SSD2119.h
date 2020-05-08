@@ -44,6 +44,8 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_SPITFT.h>
+#include <Adafruit_SPITFT_Macros.h>
 
 #define RGB565 565
 #define RGB888 888
@@ -293,18 +295,21 @@
 #define MAPPED_Y(x, y)                          (y)
 
 
-class SSD2119 : public Adafruit_GFX
+//class SSD2119 : public Adafruit_SPITFT
+class SSD2119 :public  Adafruit_GFX
 {
   public:
     SSD2119(int RS, int CS, int RST);
-    void initLCD();
+    void begin(uint32_t freq = 0);
     void drawPixel(int16_t x, int16_t y, uint16_t color);
     uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
     void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
     void fillScreen(uint16_t color);
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
     void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-
+    void setRotation(uint8_t r);
+    // Transaction API not used by GFX
+//    void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 private:
     int _p_rs;
     int _p_cs;
@@ -320,7 +325,6 @@ private:
     void DrawOnePixel(unsigned short usX, unsigned short usY, unsigned long ulColor);
     int _palette;
     uint16_t currentR11H;
-//    void setRotation(uint8_t r);
     //   void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
     uint32_t color888(uint16_t rgb565);
 };

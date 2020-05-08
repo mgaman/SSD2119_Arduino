@@ -33,7 +33,7 @@ void setup() {
   digitalWrite(fSelect,HIGH);
   int w,h;
   Serial.begin(115200);
-  tft.initLCD();
+  tft.begin();
   w = tft.width();
   h = tft.height();
 

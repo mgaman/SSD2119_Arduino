@@ -2,6 +2,7 @@
  *  Took code from TheFax and repackaged as a proper class
  */
 #include <Adafruit_GFX.h>    // Core graphics library
+#include <stdint.h>
 #include "../../src/SSD2119.h"
 #include <stdio.h>
 
@@ -47,63 +48,65 @@ void setup() {
   digitalWrite(fSelect,HIGH);
   int w,h;
   Serial.begin(115200);
-  tft.initLCD();
+  tft.begin();
   w = tft.width();
   h = tft.height();
 
+#if 0
   Serial.println(F("Benchmark                Time (microseconds)"));
 
   Serial.print(F("Screen fill              "));
-  Serial.println(testFillScreen());
+//  Serial.println(testFillScreen());
   delay(500);
   Serial.print(F("Text                     "));
   Serial.println(testText());
   delay(3000);
 
   Serial.print(F("Lines                    "));
-  Serial.println(testLines(CYAN));
+//  Serial.println(testLines(CYAN));
   delay(500);
 
   Serial.print(F("Horiz/Vert Lines         "));
-  Serial.println(testFastLines(RED, BLUE));
+//  Serial.println(testFastLines(RED, BLUE));
   delay(500);
 
   Serial.print(F("Rectangles (outline)     "));
-  Serial.println(testRects(CYAN));
+//  Serial.println(testRects(CYAN));
   delay(500);
 
   Serial.print(F("Rectangles (filled)      "));
-  Serial.println(testFilledRects(RED, GREEN));
+//  Serial.println(testFilledRects(RED, GREEN));
   delay(500);
 
   Serial.print(F("Circles (filled)         "));
-  Serial.println(testFilledCircles(10, CYAN));
+//  Serial.println(testFilledCircles(10, CYAN));
 
   Serial.print(F("Circles (outline)        "));
-  Serial.println(testCircles(10, MAGENTA));
+//  Serial.println(testCircles(10, MAGENTA));
   delay(500);
 
   Serial.print(F("Triangles (outline)      "));
-  Serial.println(testTriangles());
+//  Serial.println(testTriangles());
   delay(500);
 
   Serial.print(F("Triangles (filled)       "));
-  Serial.println(testFilledTriangles());
+//  Serial.println(testFilledTriangles());
   delay(500);
 
   Serial.print(F("Rounded rects (outline)  "));
-  Serial.println(testRoundRects());
+//  Serial.println(testRoundRects());
   delay(500);
 
   Serial.print(F("Rounded rects (filled)   "));
-  Serial.println(testFilledRoundRects());
+//  Serial.println(testFilledRoundRects());
   delay(500);
 
   Serial.println(F("Done!"));
+#endif
   }
 
 void loop() {
-#if 0
+#if 1
   for(uint8_t rotation=0; rotation<4; rotation++) {
     tft.setRotation(rotation);
     testText();

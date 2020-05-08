@@ -13,11 +13,14 @@
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 
-SSD2119::SSD2119(int RS, int CS, int RST) : Adafruit_GFX(SSD2119_LCD_HORIZONTAL_MAX  , SSD2119_LCD_VERTICAL_MAX  ) {
+//SSD2119::SSD2119(int RS, int CS, int RST)  : Adafruit_SPITFT(SSD2119_LCD_HORIZONTAL_MAX, SSD2119_LCD_VERTICAL_MAX,CS,RS,RST)
+SSD2119::SSD2119(int RS, int CS, int RST)  : Adafruit_GFX(SSD2119_LCD_HORIZONTAL_MAX, SSD2119_LCD_VERTICAL_MAX)
+{
   _p_rs = RS;
   _p_cs = CS;
   _p_rst = RST;
-  _palette = RGB565;
+  _palette = RGB888;
+  currentR11H = 0;
 }
 
 void  SSD2119::SSD2119Write(unsigned char ucDC, unsigned long ulInstruction, unsigned char ucRegType) {
@@ -130,7 +133,9 @@ void SSD2119::SPI_init() {
 #endif
 }
 
-void SSD2119::initLCD() {
+void SSD2119::begin(uint32_t freq = 0) {
+	Serial.print("begin ");Serial.println(freq);
+
   //Hardware SPI initialization
   SPI_init();
 
@@ -155,8 +160,15 @@ void SSD2119::initLCD() {
   SSD2119WriteData(0x0001);
 
   // Set pixel format and basic display orientation (scanning direction)
+#if 0
   SSD2119WriteCmd(SSD2119_OUTPUT_CTRL_REG);
   SSD2119WriteData(SSD2119_OUTPUTCTL_SET(SSD2119_OUTPUT_ORIGIN_DOWNRIGHT));
+//  SSD2119WriteData(SSD2119_OUTPUTCTL_SET(SSD2119_OUTPUT_ORIGIN_UPLEFT));
+//  SSD2119WriteData(SSD2119_OUTPUTCTL_SET(SSD2119_OUTPUT_ORIGIN_DOWNLEFT));
+//  SSD2119WriteData(SSD2119_OUTPUTCTL_SET(SSD2119_OUTPUT_ORIGIN_UPRIGHT));
+#else
+  setRotation(1);
+#endif
   SSD2119WriteCmd(SSD2119_LCD_DRIVE_AC_CTRL_REG);
   SSD2119WriteData(0x0600);
 
@@ -172,7 +184,7 @@ void SSD2119::initLCD() {
    * NOTE this is actually irrelevant in 4-wire SPI mode as only RGB666 is used.
    */
   SSD2119WriteCmd(SSD2119_ENTRY_MODE_REG);
-  if (_palette = RGB888) {
+  if (_palette == RGB888) {
     SSD2119WriteData(SSD2119_ENTRY_MODE_888);
     currentR11H = SSD2119_ENTRY_MODE_888;
   }
@@ -350,36 +362,24 @@ uint16_t SSD2119::color565(uint8_t r, uint8_t g, uint8_t b) {
   return ((r & 0xF8) << 8) | ((g & 0xFC) << 2) | (b >> 3);
 }
 
-#if 0
+
+const uint16_t scans[] = {SSD2119_OUTPUT_ORIGIN_DOWNRIGHT,SSD2119_OUTPUT_ORIGIN_UPLEFT,
+		SSD2119_OUTPUT_ORIGIN_DOWNLEFT,SSD2119_OUTPUT_ORIGIN_UPRIGHT};
 void SSD2119::setRotation(uint8_t r) {
-  uint16_t r11h = currentR11H & 0xffc7; // mask out bits 3-5
-  // note r note defined anywhere in adafruit documents
-  switch (r) {
-    case 0: // portrait cable on left
-        r11h |= 0b000000;
-      break;
-    case 1:// portrait cable on right
-        r11h |= 0b010000;
-      break;
-    case 2: // portrait cable at bottom
-        r11h |= 0b100000;
-      break;
-    case 3: // landscape cable at top POR value
-      r11h |= 0x110000;
-      break;
-  }
-  SSD2119WriteCmd(SSD2119_ENTRY_MODE_REG);
-  SSD2119WriteData(r11h);
-  currentR11H = r11h;
+	  // Set pixel format and basic display orientation (scanning direction)
+	  SSD2119WriteCmd(SSD2119_OUTPUT_CTRL_REG);
+	  SSD2119WriteData(SSD2119_OUTPUTCTL_SET(scans[r]));
 }
-#endif
+
 
 void SSD2119::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
-    uint16_t r11h = currentR11H & 0xffc7; // mask out bits 3-5
+#if 1
+	uint16_t r11h = currentR11H & 0xffc7; // mask out bits 3-5
     r11h |= 0b110000; // ID 11 AM 0
     SSD2119WriteCmd(SSD2119_ENTRY_MODE_REG);
     SSD2119WriteData(r11h);
     currentR11H = r11h;
+#endif
     drawPixel(x,y,color); // set cursor position & first pixel
     for (int i=w-1;i>=0;i--) {
       // Write the remaining pixels
@@ -429,3 +429,29 @@ void SSD2119::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t colo
     drawPixel(x+h,y+j,color);
   }
 }
+
+#if 0
+// Transaction API not used by GFX
+void SSD2119::setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+	Serial.println();
+	Serial.print("SAD x: ");Serial.print(y);
+   Serial.print(" y: ");Serial.print(y);
+   Serial.print(" w: ");Serial.print(w);
+   Serial.print(" h: ");Serial.println(h);
+   // Set the display size and ensure that the GRAM window is set to allow
+   // access to the full display buffer.
+#if 0
+   SSD2119WriteCmd(SSD2119_V_RAM_POS_REG);
+   SSD2119WriteData((y+h-1) << 8);
+   SSD2119WriteCmd(SSD2119_H_RAM_START_REG);
+   SSD2119WriteData(0x0000);
+   SSD2119WriteCmd(SSD2119_H_RAM_END_REG);
+   SSD2119WriteData(x+w-1);
+   SSD2119WriteCmd(SSD2119_X_RAM_ADDR_REG);
+   SSD2119WriteData(0x00);
+   SSD2119WriteCmd(SSD2119_Y_RAM_ADDR_REG);
+   SSD2119WriteData(0x00);
+   SSD2119WriteCmd(SSD2119_RAM_DATA_REG);
+#endif
+  }
+#endif
