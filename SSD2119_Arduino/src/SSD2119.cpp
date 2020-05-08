@@ -19,8 +19,11 @@ SSD2119::SSD2119(int RS, int CS, int RST)  : Adafruit_GFX(SSD2119_LCD_HORIZONTAL
   _p_rs = RS;
   _p_cs = CS;
   _p_rst = RST;
-  _palette = RGB888;
+  _palette = RGB666;
   currentR11H = 0;
+  last565 = 123;
+//  last888 = 0;
+  last666 = 0;
 }
 
 void  SSD2119::SSD2119Write(unsigned char ucDC, unsigned long ulInstruction, unsigned char ucRegType) {
@@ -184,9 +187,9 @@ void SSD2119::begin(uint32_t freq = 0) {
    * NOTE this is actually irrelevant in 4-wire SPI mode as only RGB666 is used.
    */
   SSD2119WriteCmd(SSD2119_ENTRY_MODE_REG);
-  if (_palette == RGB888) {
-    SSD2119WriteData(SSD2119_ENTRY_MODE_888);
-    currentR11H = SSD2119_ENTRY_MODE_888;
+  if (_palette == RGB666) {
+    SSD2119WriteData(SSD2119_ENTRY_MODE_666);
+    currentR11H = SSD2119_ENTRY_MODE_666;
   }
   else {
     SSD2119WriteData(SSD2119_ENTRY_MODE_POR);
@@ -311,14 +314,11 @@ void SSD2119::DrawOnePixel(unsigned short usX, unsigned short usY, unsigned long
     usStartX++;
   }*/
 
-
-
-uint16_t last565 = 123;
-uint32_t last888;
 bool _first = true;
 /*
   https://www.lucasgaland.com/24-bit-16-bit-color-converter-tool-for-embedded-lcd-guis/
 */
+#if 0
 uint32_t SSD2119::color888(uint16_t rgb565)
 {
   if (_first) {
@@ -348,11 +348,33 @@ uint32_t SSD2119::color888(uint16_t rgb565)
   }
   return last888;
 }
+#endif
+
+uint32_t SSD2119::color666(uint16_t rgb565)
+{
+  if (_first) {
+    _first = false;
+    last565 = rgb565 + 1;
+  }
+  if (rgb565 != last565){
+    last565 = rgb565;
+    uint32_t byte_r = (rgb565 & 0xF800) >> 11;
+    uint32_t byte_g = (rgb565 & 0x07E0) >> 5;
+    uint32_t byte_b = rgb565 & 0x1F;
+
+    byte_r = (byte_r <<3);   // 5 to 8 bits
+    byte_g = (byte_g <<2);  // 6 to 8 bits
+    byte_b = (byte_b << 3);  // 5 to 8 bits
+
+    last666 = (byte_r << 16) | (byte_g << 8) | (byte_b);  // keeps 24 bit format
+  }
+  return last666;
+}
 
 void SSD2119::drawPixel(int16_t x, int16_t y, uint16_t color) {
   // convert adafruit 565 RGB to 888
-  if (_palette == RGB888)
-    DrawOnePixel(x,y,color888(color));
+  if (_palette == RGB666)
+    DrawOnePixel(x,y,color666(color));
   else
     DrawOnePixel(x,y,color);
 }
@@ -384,8 +406,8 @@ void SSD2119::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
     for (int i=w-1;i>=0;i--) {
       // Write the remaining pixels
       SSD2119WriteCmd(SSD2119_RAM_DATA_REG);
-      if (_palette == RGB888)
-        SSD2119WritePixelData(color888(color));
+      if (_palette == RGB666)
+        SSD2119WritePixelData(color666(color));
       else
         SSD2119WritePixelData(color);
     }

@@ -49,6 +49,7 @@
 
 #define RGB565 565
 #define RGB888 888
+#define RGB666 666
 //Operative logic states
 #define SSD2119_DC_COMMAND                      LOW
 #define SSD2119_DC_DATA                         HIGH
@@ -182,7 +183,7 @@
 #define SSD2119_SLEEP_MODE_ENTER                0x0001
 #define SSD2119_SLEEP_MODE_EXIT                 0x0000
 #define SSD2119_ENTRY_MODE_POR              0x6230 // POR  65K
-#define SSD2119_ENTRY_MODE_888              0x48B0  //  262k colors in original code
+#define SSD2119_ENTRY_MODE_666              0x48B0  //  262k colors in original code
 #define SSD2119_ENTRY_MODE_SET(x)               ((SSD2119_ENTRY_MODE_DEFAULT & 0xFF00) | (x))
 #define SSD2119_EM_VSYNC_INPUT                  0x8000
 #define SSD2119_EM_65KCOLOR                     0x6000
@@ -326,5 +327,9 @@ private:
     int _palette;
     uint16_t currentR11H;
     //   void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
-    uint32_t color888(uint16_t rgb565);
+ //   uint32_t color888(uint16_t rgb565);
+    uint32_t color666(uint16_t rgb565);
+    uint16_t last565;
+//    uint32_t last888;
+    uint32_t last666;
 };
