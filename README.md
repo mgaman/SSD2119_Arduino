@@ -7,7 +7,7 @@ Later I came upon <a href="https://github.com/TheFax/SSD2119-library">this proje
 Basically all I did was re-package the C style code as a C++ class.<p>
 ### What I added
 Adafuit GFX has all the drawing primitives I need so seemed the obvious partner. All one has to do is provide at least one method, drawPixel. All the rest falls into place.
-While that provides basic functionality it can be painfully slow. There are other GFX methods that may be overridden for better performance. So far I have implemented drawFastHLine which also helped me to implement fillScreen, fillRect and drawRect.
+While that provides basic functionality it can be painfully slow. There are other GFX methods that may be overridden for better performance. So far I have implemented **drawFastHLine** which also helped me to implement **fillScreen, fillRect** and **drawRect**. **setRotation** has been implemented but it should be noted that only Landscape mode is given as the hardware does not support Portrait mode. 
 ### What I took away
 All drawing primitives and font information. These are now provided by GFX
 ### What I changed
@@ -15,7 +15,7 @@ Only color mode RGB565 is supported which is what GFX uses. As we are using the 
 It is no longer necessary to specify the target architecture which is now recognised at compile time.<p>
 For the Due platform extended SPI is compiled even though Arduino forums advise against it. I measured a small performance benefit.
 ## TBD
-Implement GFX methods setRotation and drawFastVLine.<p>
+Implement GFX method **drawFastVLine**.<p>
 This is still a work in progress and I have yet to develop better optimisation.<p>
 ## Other Devices
 My board is described as having 3 other devices, SD card, TouchPanel and DataFlash. The SD card can be used via the SD library and the Touch Panel via the XPT2046 Touchscreen library. I could not find a flash device although I did find an unpopulated SMD place.
