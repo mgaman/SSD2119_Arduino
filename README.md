@@ -26,10 +26,16 @@ SCL  a.k.a. SPI clock a.k.a. SCLK.  NOTE: This does NOT refer to I2C SCL<p>
 SDA  a.k.a  SPI Master to Slave a.k.a. MOSI.  NOTE: This does NOT refer to I2C SDA<p>
 If using just the TFT, use the SCL and SDA pins. If also using the SD and TouchPanel then SCLK, MOSI and MISO must be connected, in addition to SCL and SDA. Also make sure that all chip select pins are connected and unused devices deseleted.  
 ## This Repository Layout
-I use Eclipse with Arduino plugin as my IDE. While convenient it has some incompatabilities for developing an Arduino library
+I use Eclipse C/C++ with Arduino plugin as my IDE. While convenient it has some incompatabilities for developing an Arduino library
 complete with examples.
 - Only 1 source file containing setup() per project. There is no mechanism for excluding files from the build process.
 I get around that by renaming all examples files as XXX.txt except 1 (which gets compiled).
 - The source file type **pde** or **ino** is not honored. Only **cpp** works.
 - The Arduino plugin does not have any way to set include file path, so examples cannot use the **<SSD2119.h>** format.
-I am forced to use the relative **"../../src/SSD2119.h"** format
+I am forced to use the relative **"../../src/SSD2119.h"** format.
+### Eclipse with Sloeber Arduino Plugin ###
+This plugin is more akin to the classic Arduino IDE. It does address some of my concerns from the previous paragraph.
+- Using #include trickery the actual sketch containing setup() and loop() has the .ino filetype. Another, parallel, c++ file simply "includes" the ino sketch.
+- Sketch "parent" files may be excluded from the project by a rather convoluted process on the file properties page.
+- Include file directory pathnames can be edited so the #include <SSD2119.h> format can be used.
+- Repositories are not easily check in/out on different platforms. I found it necessary to create separate Build configurations for Windows and Ubuntu.
